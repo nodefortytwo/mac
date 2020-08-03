@@ -28,6 +28,10 @@ func cloneHandler(c *cli.Context) error {
 		return errors.New("provide git repo as first arg")
 	}
 
+	if !strings.HasSuffix(gitRepo, ".git") {
+		gitRepo += ".git"
+	}
+
 	repo, err := url.Parse(gitRepo)
 	if err != nil {
 		return err
@@ -37,7 +41,8 @@ func cloneHandler(c *cli.Context) error {
 		return errors.Errorf("this command only supports github repos, %s not supported", repo.Host)
 	}
 
-	path := config.New().GetCodeRoot() + repo.Path
+	path := getPath(repo.Path)
+
 	err = os.MkdirAll(path, 0755)
 	if err != nil {
 		return errors.Wrap(err, "error creating directory")
@@ -55,4 +60,9 @@ func cloneHandler(c *cli.Context) error {
 		log.Fatal(errors.Wrap(err, errMsg))
 	}
 	return nil
+}
+
+func getPath(repo string) string {
+	path := strings.ReplaceAll(repo, "/.git", "")
+	return config.New().GetCodeRoot() + path
 }

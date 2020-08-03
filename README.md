@@ -9,5 +9,5 @@ a yaml config file should be created at `~/.mac/config`
 a complete example of all configuration. all configuration has "sensible" defaults
 
 ```yaml
-CodeRoot: /var/www # Where code should cloned to
+CodeRoot: /var/www # Where code should cloned be to
 ```
