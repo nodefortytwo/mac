@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"github.com/nodefortytwo/mac/internal/commands/clone"
+	"github.com/nodefortytwo/mac/internal/commands/docker"
+	"github.com/nodefortytwo/mac/internal/commands/lock"
+	"github.com/nodefortytwo/mac/internal/commands/prompt"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -18,6 +21,9 @@ func main() {
 		Usage: "your friendly utility CLI",
 		Commands: []*cli.Command{
 			clone.GetCommand(),
+			prompt.GetCommand(),
+			lock.GetCommand(),
+			docker.GetCommand(),
 		},
 	}
 
