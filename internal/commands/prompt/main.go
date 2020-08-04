@@ -38,7 +38,7 @@ func promptHandler(c *cli.Context) error {
 	path, _ := os.Getwd()
 	gitStatus := printGitStatus()
 	pointer := "->"
-	fmt.Printf("%s: %s %s \n%s ", Bold(Green(t)), Bold(Cyan(path)), Bold(gitStatus), BrightWhite(pointer))
+	fmt.Printf("%s: %s %s \n%s ", Bold(Green(t)), Bold(Cyan(path)), Bold(gitStatus), pointer)
 
 	return nil
 }

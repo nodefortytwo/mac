@@ -6,6 +6,7 @@ import (
 	"github.com/nodefortytwo/mac/internal/commands/docker"
 	"github.com/nodefortytwo/mac/internal/commands/lock"
 	"github.com/nodefortytwo/mac/internal/commands/prompt"
+	"github.com/nodefortytwo/mac/internal/commands/quit"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -14,6 +15,19 @@ import (
 	"sort"
 )
 
+func init() {
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath("$HOME/.mac")
+
+	if err := viper.ReadInConfig(); err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			log.Info("no config file found at ~/.mac/config")
+		} else {
+			log.Fatal(errors.Wrap(err, "error with config parsing"))
+		}
+	}
+}
 func main() {
 
 	app := &cli.App{
@@ -24,27 +38,14 @@ func main() {
 			prompt.GetCommand(),
 			lock.GetCommand(),
 			docker.GetCommand(),
+			quit.GetCommand(),
 		},
-	}
-
-	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath("$HOME/.mac")
-
-	err := viper.ReadInConfig() // Find and read the config file
-
-	if err := viper.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			log.Info("no config file found at ~/.mac/config")
-		} else {
-			log.Fatal(errors.Wrap(err, "error with config parsing"))
-		}
 	}
 
 	sort.Sort(cli.FlagsByName(app.Flags))
 	sort.Sort(cli.CommandsByName(app.Commands))
 
-	err = app.RunContext(context.Background(), os.Args)
+	err := app.RunContext(context.Background(), os.Args)
 	if err != nil {
 		log.Fatal(err)
 	}

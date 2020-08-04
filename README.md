@@ -10,4 +10,7 @@ a complete example of all configuration. all configuration has "sensible" defaul
 
 ```yaml
 CodeRoot: /var/www # Where code should cloned be to
+QuitExclusions: #apps that should not be killed when quit is called
+  - terminal
+  - spotify
 ```

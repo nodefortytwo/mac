@@ -10,7 +10,10 @@ require (
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.4.0 // indirect
 	github.com/go-git/go-git/v5 v5.1.0
+	github.com/google/gops v0.3.10
+	github.com/keybase/go-ps v0.0.0-20190827175125-91aafc93ba19
 	github.com/logrusorgru/aurora v2.0.3+incompatible
+	github.com/mitchellh/go-ps v1.0.0
 	github.com/moby/moby v1.13.1
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.0.1 // indirect
