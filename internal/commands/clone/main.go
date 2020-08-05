@@ -63,6 +63,6 @@ func cloneHandler(c *cli.Context) error {
 }
 
 func getPath(repo string) string {
-	path := strings.ReplaceAll(repo, "/.git", "")
+	path := strings.ReplaceAll(repo, ".git", "")
 	return config.New().GetCodeRoot() + path
 }

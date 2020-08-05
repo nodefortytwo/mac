@@ -1,27 +1,26 @@
 package prompt
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/go-git/go-git/v5"
-	"github.com/pkg/errors"
-	"os/exec"
-	"strings"
-
+	"github.com/nodefortytwo/isgit"
+	"github.com/nodefortytwo/slice"
 	"github.com/urfave/cli/v2"
 	"os"
+	"strings"
 	"time"
 
 	. "github.com/logrusorgru/aurora"
 )
 
-var statusMap = map[string]string{
-	"*": "Your branch is ahead of",
-	">": "renamed:",
-	"!": "modified:",
-	"+": "new file:",
-	"x": "deleted:",
-	"?": "Untracked files:",
+var statusMap = map[string]git.StatusCode{
+	"*":  git.UpdatedButUnmerged,
+	">":  git.Renamed,
+	"!":  git.Modified,
+	"+":  git.Added,
+	"x":  git.Deleted,
+	"?":  git.Untracked,
+	"||": git.Copied,
 }
 
 func GetCommand() *cli.Command {
@@ -56,17 +55,24 @@ func printGitStatus() string {
 
 	var flags []string
 
-	status, err := status()
-	if status == "" || err != nil {
+	ref, err := repo.Worktree()
+	if err != nil {
+		return ""
+	}
+	stat, err := ref.Status()
+	if err != nil {
 		return ""
 	}
 
-	for flag, str := range statusMap {
-		if strings.Contains(status, str) {
-			flags = append(flags, flag)
+	for _, status := range stat {
+		for flag, statusCode := range statusMap {
+			if status.Worktree == statusCode {
+				flags = append(flags, flag)
+			}
 		}
 	}
 
+	flags = slice.String(flags).Unique()
 	if len(flags) > 0 {
 		branch += " " + strings.Join(flags, "")
 	}
@@ -74,29 +80,8 @@ func printGitStatus() string {
 	return fmt.Sprintf("[%s]", branch)
 }
 
-func status() (string, error) {
-	cmd := exec.Command("git", "status")
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		errMsg := strings.TrimSpace(string(out))
-		return "", errors.Wrap(err, errMsg)
-	}
-	return strings.TrimSpace(string(out)), nil
-}
-
-func GetGitRootPath() (string, error) {
-	cmd := exec.Command("git", "rev-parse", "--show-toplevel")
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	err := cmd.Run()
-	if err != nil {
-		return "", err
-	}
-	return strings.TrimSpace(out.String()), nil
-}
-
 func GetGitRepo() (*git.Repository, error) {
-	path, err := GetGitRootPath()
+	path, err := isgit.GetRootDirWD()
 
 	if err != nil {
 		return nil, err
