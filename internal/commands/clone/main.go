@@ -1,14 +1,15 @@
 package clone
 
 import (
-	"github.com/nodefortytwo/mac/internal/config"
-	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
-	"github.com/urfave/cli/v2"
 	"net/url"
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/nodefortytwo/mac/internal/config"
+	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
+	"github.com/urfave/cli/v2"
 )
 
 func GetCommand() *cli.Command {
@@ -35,10 +36,6 @@ func cloneHandler(c *cli.Context) error {
 	repo, err := url.Parse(gitRepo)
 	if err != nil {
 		return err
-	}
-
-	if repo.Host != "github.com" {
-		return errors.Errorf("this command only supports github repos, %s not supported", repo.Host)
 	}
 
 	path := getPath(repo.Path)
